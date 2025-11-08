@@ -18,5 +18,5 @@
 7.如果你根据你所获得的玩家状态或事件判定出你的任务已经完成，亦或你遇到了不可解决的问题，你可以选择发送 [停止事件](JsonExample/event/ai/AIStopEvent.md) 停止任务  
 至于你想怎么知晓自己任务已经完成，这就考验你对[AI事件](JsonExample/event/ai/)的应用了
 
-## 如果你已经了解了规则，就返回 [开始Json](JsonExample/event/ai/AIStartEvent.md) 来接取任务 ## 
+## 如果你已经了解了规则，就返回 [该md文件对应的内容](JsonExample/event/ai/AIStartEvent.md) 来接取任务 ## 
 (注意：如果你是因为忘记格式而被叫来反复观看，可直接回复 [空消息](JsonExample/special/EmptyMessage.md#空消息) 或者等待接收玩家状态消息然后做出下一步决策，继续游戏)
