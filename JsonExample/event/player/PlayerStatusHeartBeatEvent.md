@@ -3,7 +3,7 @@
 正常情况下，该事件消息会隔一段时间发送你一次，便于你了解你所操控的角色状况。
 ```jsonc
 {
-  "type": "EVENT_PLAYER_STATUS_HEARTBEAT"
+  "type": "EVENT_PLAYER_STATUS_HEARTBEAT",
 //玩家生命信息
   "health": 0,
   "maxHealth": 0,
@@ -28,5 +28,6 @@
 2.根据玩家状态，回复[AI操控玩家事件消息](../ai/AIControlEvent.md) ，决定玩家角色下一步该做什么。
   
 3.某些情况你可以判断出你已经完成了任务，如到达某个位置，那你可以发送 [停止事件消息](../ai/AIStopEvent.md) 了
+
 
 
