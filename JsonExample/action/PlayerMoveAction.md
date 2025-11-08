@@ -2,6 +2,7 @@
 利用Baritone让角色寻路移动到某个点
 ```jsonc
 {
+  "type": "ACTION_MOVE",
   "x": 0, //目标点X坐标
   "y": 0, //目标点Y坐标
   "z": 0  //目标点Z坐标
