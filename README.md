@@ -133,7 +133,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
     - `inventroy`玩家背包
       - `name` 物品ID
       - `count` 物品数量
-    ```json
+    ```jsonc
     {
       //...
       "inventory":
@@ -157,7 +157,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
     - `current_baritone_task` 当前 Baritone 正在进行的动作  
 - **`current_baritone_task`包含的类型**
   -  #### 无动作(`NONE`)
-  ```json
+  ```jsonc
   {
     //...
     "current_baritone_task":
@@ -169,7 +169,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
   ```
   -  #### 正在挖掘方块(`BSTATUS_MINING`)
      - `mining_block_name` 正在挖掘的方块ID
-  ```json
+  ```jsonc
   {
     //...
     "current_baritone_task":
@@ -182,7 +182,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
   ```
   -  #### 正在寻找目标方块(`BSTATUS_FINDING_NEEDED_BLOCKS`)
       - `needed_blocks` 正在寻找的方块ID，一般由`ACTION_COLLECT_BLOCK`决定
-  ```json
+  ```jsonc
   {
     //...
     "current_baritone_task":
@@ -198,7 +198,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
   ```
   -  #### 正在寻路到某个点（X/Y/Z）(`BSTATUS_PATHING_TO_GOAL`)
         - `x`/`y`/`z` 目标坐标
-  ```json
+  ```jsonc
   {
     //...
     "current_baritone_task":
@@ -213,7 +213,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
   ```
   -  #### 正在寻路到某个点（X/Z）(`BSTATUS_PATHING_TO_XZ`)
         - `x`/`z` 目标坐标
-  ```json
+  ```jsonc
   {
     //...
     "current_baritone_task":
