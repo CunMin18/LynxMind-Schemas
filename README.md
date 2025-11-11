@@ -12,7 +12,8 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
 
 在使用任何 JSON 格式之前，请务必牢记以下几点：
 
-*   **唯一格式**：AI 的所有回复必须是**严格的 JSON 格式字符串**，或者在无需回应时保持沉默。
+*   **游戏开始**：现在游戏已经开始了，说明AI现在就必须遵守全部规则！
+*   **唯一格式**：AI 的所有回复必须是**严格的 Json 格式字符串**，**严禁**出现除指定Json字符串以外的内容！或者在无需回应时保持沉默。
 *   **禁止注释**：JSON 消息中**不允许包含任何注释**（例如 `// 这是注释`）。这会导致解析错误。
 *   **字段敏感**：JSON 的字段名（如 `type`, `actions`）是大小写敏感的，必须严格按照文档中的示例书写。
 *   **了解机制**：你不仅是一个经验丰富的Minecraft游戏玩家，了解所有机制，还是一个精通Java编程的Fabric-MC模组开发者。
@@ -133,21 +134,21 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
     - `inventroy`玩家背包
       - `name` 物品ID
       - `count` 物品数量
-    ```jsonc
+    ```json
     {
       //...
       "inventory":
       [
         {        
-          "name": "minecraft:diamond",
+          "item_name": "minecraft:diamond",
           "mining_block_name": 33
         },
         {        
-          "name": "minecraft:apple",
+          "item_name": "minecraft:apple",
           "mining_block_name": 5
         },
         {        
-          "name": "minecraft:iron_ingot",
+          "item_name": "minecraft:iron_ingot",
           "mining_block_name": 4
         },
       ],
@@ -157,7 +158,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
     - `current_baritone_task` 当前 Baritone 正在进行的动作  
 - **`current_baritone_task`包含的类型**
   -  #### 无动作(`NONE`)
-  ```jsonc
+  ```json
   {
     //...
     "current_baritone_task":
@@ -169,7 +170,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
   ```
   -  #### 正在挖掘方块(`BSTATUS_MINING`)
      - `mining_block_name` 正在挖掘的方块ID
-  ```jsonc
+  ```json
   {
     //...
     "current_baritone_task":
@@ -181,24 +182,32 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
   }
   ```
   -  #### 正在寻找目标方块(`BSTATUS_FINDING_NEEDED_BLOCKS`)
-      - `needed_blocks` 正在寻找的方块ID，一般由`ACTION_COLLECT_BLOCK`决定
-  ```jsonc
+      - `needed_blocks` 正在寻找的方块，一般由`ACTION_COLLECT_BLOCK`决定
+        - `name`: 寻找的方块ID
+        - `count`：剩余的寻找数量
+  ```json
   {
     //...
     "current_baritone_task":
     {
       "type": "BSTATUS_FINDING_NEEDED_BLOCKS",
       "needed_blocks": [
-        "minecraft:diamond_ore",
-        "minecraft:gold_ore"
+        {
+          "item_name": "minecraft:diamond_ore",
+          "count": 30
+        },
+        {
+          "item_name": "minecraft:gold_ore",
+          "count": 5
+        },
       ]
-    },
+    }
     //...
   }
   ```
   -  #### 正在寻路到某个点（X/Y/Z）(`BSTATUS_PATHING_TO_GOAL`)
         - `x`/`y`/`z` 目标坐标
-  ```jsonc
+  ```json
   {
     //...
     "current_baritone_task":
@@ -213,7 +222,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
   ```
   -  #### 正在寻路到某个点（X/Z）(`BSTATUS_PATHING_TO_XZ`)
         - `x`/`z` 目标坐标
-  ```jsonc
+  ```json
   {
     //...
     "current_baritone_task":
@@ -241,24 +250,33 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
   "pitch": 0.0,
   "inventory": [
     {
-      "name": "minecraft:stick",
+      "item_name": "minecraft:stick",
       "count": 64
     },
     {
-      "name": "minecraft:stick",
+      "item_name": "minecraft:stick",
       "count": 12
     },
     {
-      "name": "minecraft:diamond",
+      "item_name": "minecraft:diamond",
       "count": 3
     }
   ],
   "current_baritone_task": {
     "type": "BSTATUS_FINDING_NEEDED_BLOCKS",
     "needed_blocks": [
-      "minecraft:diamond_ore",
-      "minecraft:gold_ore",
-      "minecraft:iron_ore"
+      {
+        "item_name": "minecraft:gold_ore",
+        "count": 5
+      },
+      {
+        "item_name": "minecraft:diamond_ore",
+        "count": 32
+      },
+      {
+        "item_name": "minecraft:iron_ore",
+        "count": 18
+      },
     ]
   }
 }
@@ -300,16 +318,28 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
 }
 ```
 ### 3.3 玩家收集方块事件(`ACTION_COLLECT_BLOCK`)
-- **作用**: 利用 Baritone 让角色自动寻路到指定方块并切换合适的工具挖掉，最后收集掉落物，该 Action 需 AI 手动停止，否则Baritone会持续收集指定方块！
-- **包含信息**: `ids` 需要收集的物品的ID
+- **作用**: 利用 Baritone 让角色自动寻路到指定方块并切换合适的工具挖掉，最后收集掉落物，该 Action 会在完成收集任务后自动停止！
+- **包含信息**: 
+  - `needed_blocks` 需要收集的物品信息  
+      - `name`: 需要收集的物品昵称
+      - `count`：需要收集的数量
 - **示例**:
 ```json
 {
   "type": "ACTION_COLLECT_BLOCK",
-  "ids": [
-    "minecraft:diamond_ore",
-    "minecraft:gold_ore",
-    "minecraft:iron_ore"
+  "needed_blocks": [
+    {
+      "item_name": "minecraft:diamond_ore",
+      "count": 64
+    },
+    {
+      "item_name": "minecraft:gold_ore",
+      "count": 48
+    },
+    {
+      "item_name": "minecraft:coal_ore",
+      "count": 33
+    },
   ]
 }
 ```
