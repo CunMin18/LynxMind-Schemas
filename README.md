@@ -29,7 +29,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
 #### 2.1.1 AI 启动事件 (`EVENT_AI_START`)
 
 *   **作用**: AI 告诉系统：“我已准备好，可以开始接收任务了。”
-*   **何时使用**: 在收到初始任务描述或被要求开始工作后，AI 应首先发送此事件。
+*   **何时使用**: 在初次介绍完游戏规则后，AI 应首先发送此事件。
 *   **示例**:
   ```json
   {
@@ -38,7 +38,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
   ```
 #### 2.1.2 AI 控制事件 (`EVENT_AI_CONTROL`)
 *   **作用**: AI 发送具体指令，控制 Minecraft 角色执行动作，例如移动、挖矿、攻击等。这是最核心的事件。
-*   **何时使用**: 当 AI 决定让角色执行某个或一系列动作时。(动作格式详见 3.动作类型详解 )
+*   **何时使用**: 当 AI 决定让角色执行某个或一系列动作`Action`时。(动作格式详见 `3.动作类型详解` )
 *   **示例**:  
 ````json
 {
@@ -54,7 +54,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
   "plans": "我需要先移动到坐标 (0, 64, 10) 的位置，然后再决策下一步干什么。（简要地说明打算）"
 }
 ````
-#### 2.1.3 AI 停止事件 (`EVENT_AI_STOP`)
+#### 2.1.3 AI 停止任务事件 (`EVENT_AI_STOP`)
 *   **作用**: AI 告诉系统：“任务已完成” 或 “我遇到了无法解决的问题，需要停止，然后该任务会作废。”
 *   **何时使用**: AI认为任务成功结束时，或遇到无法继续的障碍（如材料不足、找不到目标）时。
 *   **示例**:  
@@ -296,9 +296,31 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
   "count": 64
 }
 ```
+#### 2.2.4 玩家Baritone任务`BTASK`取消事件 (`EVENT_PLAYER_BARITONE_TASK_STOP`)
+- **作用**: 告诉AI Baritone的某个TASK`BTASK`被取消了（比如寻路/收集TASK，不是玩家布置给AI的任务），便于AI进行下一步操作。
+- **系统何时发送**：
+    - `BTASK`因各种原因被取消
+- **包含信息**:
+    - `reason` 取消的原因
+    - `linked_action` 与之相关联的Action（该`BTASK`由AI给出的`Action`创建，便于AI了解被取消的`BTASK`（先前AI创建的`Action`）内容）
+- **示例:**
+```json
+{
+  "type": "EVENT_PLAYER_BARITONE_TASK_STOP",
+  "reason": "已到达目的地",
+  "linked_action": 
+  {
+    "type": "ACTION_MOVE",
+    "x": 35,
+    "y": 22,
+    "z": 18
+  }
+}
+```
 ## 3. 支持的动作类型 (`Action`)
-### 3.2 停下 Baritone 的当前工作(`ACTION_STOP_BARITONE`)
-- **作用**: Baritone 一般不会同时多项任务，该动作可使 Baritone 停下当前任务。
+名词解释`BTASK`:Baritone创建的工作（如寻路到某个位置/收集某些材料等）
+### 3.2 停下 Baritone 的当前工作（停下全部`BTASK`）(`ACTION_STOP_BARITONE`)
+- **作用**: Baritone 一般不会同时多项任务，该动作可使 Baritone 停下当前`BTASK`。
 - **示例**:
 ```json
 {
@@ -306,7 +328,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
 }
 ```
 ### 3.2 移动(`ACTION_MOVE`)
-- **作用**: 利用 Baritone 让角色寻路到指定点
+- **作用**: 利用 Baritone 创建`BTASK`让角色寻路到指定点
 - **包含信息**: `x`/`y`/`z` 目标点位置
 - **示例**:
 ```json
@@ -318,7 +340,7 @@ LynxMind 项目的 JSON Schema 定义与事件规范。这份文档详细说明�
 }
 ```
 ### 3.3 玩家收集方块事件(`ACTION_COLLECT_BLOCK`)
-- **作用**: 利用 Baritone 让角色自动寻路到指定方块并切换合适的工具挖掉，最后收集掉落物，该 Action 会在完成收集任务后自动停止！
+- **作用**: 利用 Baritone 创建`BTASK`让角色自动寻路到指定方块并切换合适的工具挖掉，最后收集掉落物，该 `Action` 对应的`BTASK`会在完成收集任务后自动停止！
 - **包含信息**: 
   - `needed_blocks` 需要收集的物品信息  
       - `name`: 需要收集的物品昵称
